@@ -42,9 +42,9 @@ DOCKER_BASE = [
     "20",
     "--read-only",
     "--tmpfs",
-    "/sandbox:size=20m,uid=999,gid=999",
+    "/sandbox:size=20m,uid=999,gid=999,exec",
     "--tmpfs",
-    "/tmp:size=10m",
+    "/tmp:size=10m,exec",
 ]
 
 # Outer timeout (seconds) - must be > inner runner timeout
