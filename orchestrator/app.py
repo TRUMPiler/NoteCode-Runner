@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify, make_response
 import subprocess
 import json
 import time
+import os
 
 app = Flask(__name__)
 
@@ -122,6 +123,9 @@ def execute():
                 "raw_stdout": raw_out[:100 * 1024],
                 "raw_stderr": raw_err[:100 * 1024],
             }
+            
+        # Provide 'output' as an alias for 'stdout' in the API response
+        result["output"] = result.get("stdout", "")
 
         # Attach observability metadata
         result.setdefault("_meta", {})
@@ -142,7 +146,7 @@ def execute():
 @app.after_request
 def add_cors_headers(response):
     # Allow requests from the frontend during development. Adjust in production.
-    response.headers["Access-Control-Allow-Origin"] = "http://localhost:5173"
+    response.headers["Access-Control-Allow-Origin"] = os.environ.get("CORS_ORIGIN", "http://localhost:5173")
     response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
     response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
     return response

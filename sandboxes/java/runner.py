@@ -4,13 +4,13 @@ MAX_OUTPUT      = 100 * 1024
 COMPILE_TIMEOUT = 15
 RUN_TIMEOUT     = 10
 
+ansi = re.compile(r'\x1B[@-_][0-?]*[ -/]*[@-~]')
+
 def sanitize(text):
-    ansi = re.compile(r'\x1B[@-_][0-?]*[ -/]*[@-~]')
     return ansi.sub('', text).replace('\x00', '')
 
 def extract_class_name(code):
     # Java filename must match public class name
-    import re
     # Prefer the class that contains a main method
     m_main = re.search(r'class\s+(\w+)[^{]*\{[\s\S]*?static\s+void\s+main', code)
     if m_main:
@@ -73,7 +73,7 @@ def main():
     # -cp /sandbox tells java where to find the .class file
     try:
         proc = subprocess.Popen(
-            ["java", "-cp", "/sandbox", class_name],
+            ["java", "-Xmx32m", "-cp", "/sandbox", class_name],
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE
